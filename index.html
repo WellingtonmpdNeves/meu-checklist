@@ -729,8 +729,8 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
   }
 
-  /* ============ CHECKLIST LOGIC + LOCALSTORAGE ============ */
-  const STORAGE_KEY = 'checklist-estudos-v1';
+  /* ============ CHECKLIST LOGIC + SYNC ENTRE DISPOSITIVOS ============ */
+  const STORAGE_KEY = 'checklist-semanas-25-37';
   const items = document.querySelectorAll('.item');
   const bar = document.getElementById('bar');
   const count = document.getElementById('count');
@@ -738,38 +738,73 @@
   const total = items.length;
   const sectionCelebrated = new WeakMap();
 
-  /* Assign a stable ID to each item based on its text content */
+  /* ID estável baseado no texto do item */
   function itemId(item) {
-    return item.querySelector('.item-text')?.textContent.trim() || item.innerText.trim();
+    return (item.querySelector('.item-text')?.textContent || '').trim();
   }
 
-  /* Save current state to localStorage */
-  function saveState() {
+  /* ── SYNC STATUS INDICATOR ── */
+  const syncIndicator = document.createElement('div');
+  syncIndicator.id = 'sync-indicator';
+  syncIndicator.style.cssText = `
+    position:fixed; bottom:24px; right:20px; z-index:70;
+    display:flex; align-items:center; gap:7px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:99px; padding:6px 14px;
+    font-size:0.72rem; font-weight:600; color:var(--muted);
+    transition:opacity 0.4s ease; opacity:0;
+    font-family:'Inter',sans-serif;
+  `;
+  document.body.appendChild(syncIndicator);
+
+  function showSync(msg, color) {
+    syncIndicator.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;"></span>${msg}`;
+    syncIndicator.style.opacity = '1';
+    clearTimeout(syncIndicator._timer);
+    syncIndicator._timer = setTimeout(() => { syncIndicator.style.opacity = '0'; }, 2200);
+  }
+
+  /* ── SAVE to cross-device storage ── */
+  async function saveState() {
     const state = {};
-    items.forEach(item => {
-      state[itemId(item)] = item.classList.contains('done');
-    });
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+    items.forEach(item => { state[itemId(item)] = item.classList.contains('done'); });
+    try {
+      await window.storage.set(STORAGE_KEY, JSON.stringify(state));
+      showSync('Salvo ✓', 'var(--green)');
+    } catch(e) {
+      // fallback to localStorage
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(_) {}
+      showSync('Salvo localmente', 'var(--gold)');
+    }
   }
 
-  /* Load saved state from localStorage */
-  function loadState() {
+  /* ── LOAD from cross-device storage ── */
+  async function loadState() {
+    let state = null;
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
-      const state = JSON.parse(saved);
+      const result = await window.storage.get(STORAGE_KEY);
+      if (result?.value) state = JSON.parse(result.value);
+    } catch(e) {
+      // fallback to localStorage
+      try {
+        const local = localStorage.getItem(STORAGE_KEY);
+        if (local) state = JSON.parse(local);
+      } catch(_) {}
+    }
+    if (state) {
       items.forEach(item => {
         if (state[itemId(item)] === true) item.classList.add('done');
       });
-    } catch(e) {}
+      showSync('Sincronizado ✓', 'var(--accent)');
+    }
+    update(true);
   }
 
-  /* Add a reset button to the progress card */
+  /* ── RESET BUTTON ── */
   (function addResetButton() {
     const wrap = document.querySelector('.progress-wrap');
     if (!wrap) return;
     const btn = document.createElement('div');
-    btn.id = 'reset-btn';
     btn.title = 'Resetar todos os itens';
     btn.textContent = '↺';
     btn.style.cssText = `
@@ -778,31 +813,31 @@
       background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.2);
       display:flex; align-items:center; justify-content:center;
       font-size:1rem; cursor:pointer; color:#f87171;
-      transition:background 0.15s, transform 0.15s; user-select:none;
+      transition:background 0.15s; user-select:none;
     `;
-    btn.addEventListener('mouseenter', () => btn.style.background = 'rgba(255,107,107,0.2)');
+    btn.addEventListener('mouseenter', () => btn.style.background = 'rgba(255,107,107,0.22)');
     btn.addEventListener('mouseleave', () => btn.style.background = 'rgba(255,107,107,0.1)');
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (!confirm('Resetar todos os itens marcados?')) return;
       items.forEach(item => item.classList.remove('done'));
-      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
       window.__finaleFired = false;
+      try { await window.storage.delete(STORAGE_KEY); } catch(e) {}
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+      showSync('Resetado', '#f87171');
       update(true);
     });
     wrap.appendChild(btn);
   })();
 
+  /* ── UPDATE UI ── */
   function update(silent = false) {
     const done = document.querySelectorAll('.item.done').length;
     const pct = total ? Math.round((done / total) * 100) : 0;
     bar.style.width = pct + '%';
     count.textContent = done + ' / ' + total;
 
-    if (done === total) {
-      alldone.classList.add('show');
-    } else {
-      alldone.classList.remove('show');
-    }
+    if (done === total) alldone.classList.add('show');
+    else alldone.classList.remove('show');
 
     document.querySelectorAll('.section').forEach(sec => {
       const secItems = sec.querySelectorAll('.item');
@@ -811,9 +846,8 @@
       const badge = sec.querySelector('.earned-badge');
       const titleEl = sec.querySelector('.section-title');
 
-      if (fill && secItems.length) {
+      if (fill && secItems.length)
         fill.style.width = Math.round(secDone / secItems.length * 100) + '%';
-      }
 
       const isComplete = secItems.length > 0 && secDone === secItems.length;
 
@@ -847,8 +881,9 @@
     }
   }
 
+  /* ── ITEM CLICK ── */
   items.forEach(item => {
-    item.addEventListener('click', (e) => {
+    item.addEventListener('click', () => {
       const wasDone = item.classList.contains('done');
       item.classList.toggle('done');
       const nowDone = item.classList.contains('done');
@@ -865,14 +900,13 @@
         playUncheckSound();
       }
 
-      saveState();
       update();
+      saveState();
     });
   });
 
-  /* Load saved state silently (no confetti/sounds on restore), then render */
+  /* ── BOOT: load state then render ── */
   loadState();
-  update(true);
 </script>
 </body>
 </html>
