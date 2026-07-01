@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Meus Checklists</title>
+  <title>Semana 25</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap');
 
@@ -22,447 +22,857 @@
     }
 
     body {
-      background: radial-gradient(ellipse at 20% 20%, #11132080 0%, transparent 55%),
-                  radial-gradient(ellipse at 85% 75%, #0d1a1480 0%, transparent 55%),
+      background: radial-gradient(ellipse at 30% 20%, #11132080 0%, transparent 55%),
+                  radial-gradient(ellipse at 80% 70%, #0d1a1480 0%, transparent 55%),
                   var(--bg);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      padding: 0 0 80px;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px 48px;
+      position: relative;
       overflow-x: hidden;
     }
 
+    /* Ambient background particles */
     #particle-bg {
-      position: fixed; inset: 0; width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
 
-    /* ── HERO ── */
-    .hero {
-      position: relative; z-index: 1;
-      text-align: center;
-      padding: 72px 24px 56px;
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 50;
+      pointer-events: none;
     }
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
+
+    .container { width: 100%; max-width: 560px; position: relative; z-index: 1; }
+
+    /* Header */
+    .header { text-align: center; margin-bottom: 28px; }
+    .header .badge {
+      display: inline-block;
       font-family: 'Sora', sans-serif;
-      font-size: 0.7rem; font-weight: 800;
-      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--accent);
+      background: rgba(108,99,255,0.12);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 5px 14px;
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+
+    /* Progress */
+    .progress-wrap {
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      margin-bottom: 22px;
+      position: relative;
+    }
+    .sound-toggle {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 30px; height: 30px;
+      border-radius: 8px;
       background: rgba(108,99,255,0.1);
       border: 1px solid var(--border);
-      border-radius: 99px; padding: 5px 16px;
-      margin-bottom: 24px;
-    }
-    .hero h1 {
-      font-family: 'Sora', sans-serif;
-      font-size: clamp(2rem, 6vw, 3rem);
-      font-weight: 800; line-height: 1.1;
-      margin-bottom: 16px;
-      background: linear-gradient(135deg, var(--text) 0%, #a78bfa 60%, var(--green) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero p {
-      font-size: 0.92rem; color: var(--muted);
-      max-width: 400px; margin: 0 auto; line-height: 1.65;
-    }
-
-    /* ── STATS BAR ── */
-    .stats-bar {
-      position: relative; z-index: 1;
-      display: flex; justify-content: center; gap: 0;
-      max-width: 460px; margin: 0 auto 56px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .stat {
-      flex: 1; padding: 16px 10px; text-align: center;
-      border-right: 1px solid var(--border);
-    }
-    .stat:last-child { border-right: none; }
-    .stat-value {
-      font-family: 'Sora', sans-serif;
-      font-size: 1.4rem; font-weight: 800; color: var(--text);
-      display: block;
-    }
-    .stat-label {
-      font-size: 0.68rem; font-weight: 600; color: var(--muted);
-      letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px;
-    }
-
-    /* ── GRID ── */
-    .grid-wrap {
-      position: relative; z-index: 1;
-      max-width: 900px; margin: 0 auto;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    /* ── CHECKLIST CARD ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      text-decoration: none;
-      color: inherit;
-      display: flex; flex-direction: column;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s;
-      cursor: pointer;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
-    }
-
-    .card-top {
-      padding: 22px 22px 16px;
-      flex: 1;
-    }
-    .card-icon-row {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .card-icon {
-      width: 44px; height: 44px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+      user-select: none;
     }
-    .card-badge {
-      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.06em;
-      text-transform: uppercase; padding: 3px 10px; border-radius: 99px;
+    .sound-toggle:hover { background: rgba(108,99,255,0.2); }
+    .sound-toggle:active { transform: scale(0.92); }
+    .sound-toggle.muted { opacity: 0.5; }
+    .progress-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
     }
-    .card h3 {
-      font-family: 'Sora', sans-serif;
-      font-size: 0.95rem; font-weight: 800; line-height: 1.3;
-      margin-bottom: 8px;
+    .progress-label {
+      font-size: 0.8rem; font-weight: 600; color: var(--muted);
+      letter-spacing: 0.04em; text-transform: uppercase;
     }
-    .card p {
-      font-size: 0.78rem; color: var(--muted); line-height: 1.55;
+    .progress-count {
+      font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--accent);
+    }
+    .progress-bar-bg { height: 7px; background: #2a2f4a; border-radius: 99px; overflow: hidden; }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      border-radius: 99px; transition: width 0.4s ease; width: 0%;
     }
 
-    /* tag list */
-    .card-tags {
-      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px;
-    }
-    .tag {
-      font-size: 0.66rem; font-weight: 600; padding: 3px 9px;
-      border-radius: 99px; background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08); color: var(--muted);
-    }
-
-    /* progress bar inside card */
-    .card-footer {
-      padding: 12px 22px 16px;
-      border-top: 1px solid var(--border);
+    /* Section */
+    .section { margin-bottom: 20px; background: var(--card); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+    .section-header {
       display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px; background: var(--surface); border-bottom: 1px solid var(--border);
     }
-    .card-bar-bg {
-      flex: 1; height: 5px; border-radius: 99px; background: #2a2f4a; overflow: hidden;
+    .section-icon { font-size: 1.15rem; flex-shrink: 0; }
+    .section-title { font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 700; letter-spacing: 0.02em; color: var(--text); flex: 1; }
+    .section-mini-bar { width: 56px; height: 5px; border-radius: 99px; background: #2a2f4a; overflow: hidden; flex-shrink: 0; }
+    .section-mini-fill { height: 100%; border-radius: 99px; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+    .section-items { padding: 10px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
+
+    /* Bonus tag */
+    .bonus-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 18px; background: rgba(251,191,36,0.07);
+      border-top: 1px dashed var(--border);
     }
-    .card-bar-fill {
-      height: 100%; border-radius: 99px;
-      transition: width 0.4s ease; width: 0%;
-    }
-    .card-pct {
-      font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 800;
-      color: var(--muted); flex-shrink: 0;
+    .bonus-label {
+      font-family: 'Sora', sans-serif; font-size: 0.7rem; font-weight: 800;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold);
+      background: rgba(251,191,36,0.12); border-radius: 6px; padding: 3px 9px;
+      flex-shrink: 0;
     }
 
-    /* arrow */
-    .card-arrow {
-      font-size: 0.8rem; color: var(--muted); flex-shrink: 0;
-      transition: transform 0.18s, color 0.18s;
+    /* Item */
+    .item { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; padding: 6px 0; user-select: none; }
+    .item:hover .check-box { border-color: var(--accent); }
+    .check-box {
+      width: 20px; height: 20px; border-radius: 6px; border: 2px solid #3d4165;
+      flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center;
+      transition: background 0.18s, border-color 0.18s, box-shadow 0.3s ease;
+      position: relative;
     }
-    .card:hover .card-arrow { transform: translateX(4px); color: var(--text); }
+    .check-box svg { opacity: 0; transform: scale(0.5); transition: opacity 0.18s, transform 0.18s; }
+    .item.done .check-box { background: var(--green); border-color: var(--green); }
+    .item.done .check-box svg { opacity: 1; transform: scale(1); }
+    .item-text { font-size: 0.87rem; line-height: 1.5; color: var(--text); transition: color 0.18s; }
+    .item.done .item-text { color: var(--muted); text-decoration: line-through; }
 
-    /* color themes per card */
-    .theme-purple .card-icon { background: rgba(108,99,255,0.15); }
-    .theme-purple .card-badge { background: rgba(108,99,255,0.15); color: var(--accent); border: 1px solid var(--border); }
-    .theme-purple .card-bar-fill { background: linear-gradient(90deg, var(--accent), #a78bfa); }
-    .theme-purple:hover { border-color: rgba(108,99,255,0.4); box-shadow: 0 16px 48px rgba(108,99,255,0.12); }
-
-    .theme-green .card-icon { background: rgba(74,222,128,0.12); }
-    .theme-green .card-badge { background: rgba(74,222,128,0.12); color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
-    .theme-green .card-bar-fill { background: linear-gradient(90deg, var(--green), #86efac); }
-    .theme-green:hover { border-color: rgba(74,222,128,0.35); box-shadow: 0 16px 48px rgba(74,222,128,0.1); }
-
-    .theme-gold .card-icon { background: rgba(251,191,36,0.12); }
-    .theme-gold .card-badge { background: rgba(251,191,36,0.12); color: var(--gold); border: 1px solid rgba(251,191,36,0.25); }
-    .theme-gold .card-bar-fill { background: linear-gradient(90deg, var(--gold), #fde68a); }
-    .theme-gold:hover { border-color: rgba(251,191,36,0.35); box-shadow: 0 16px 48px rgba(251,191,36,0.08); }
-
-    .theme-pink .card-icon { background: rgba(244,114,182,0.12); }
-    .theme-pink .card-badge { background: rgba(244,114,182,0.12); color: #f472b6; border: 1px solid rgba(244,114,182,0.25); }
-    .theme-pink .card-bar-fill { background: linear-gradient(90deg, #f472b6, #f9a8d4); }
-    .theme-pink:hover { border-color: rgba(244,114,182,0.35); box-shadow: 0 16px 48px rgba(244,114,182,0.1); }
-
-    .theme-blue .card-icon { background: rgba(96,165,250,0.12); }
-    .theme-blue .card-badge { background: rgba(96,165,250,0.12); color: #60a5fa; border: 1px solid rgba(96,165,250,0.25); }
-    .theme-blue .card-bar-fill { background: linear-gradient(90deg, #60a5fa, #93c5fd); }
-    .theme-blue:hover { border-color: rgba(96,165,250,0.35); box-shadow: 0 16px 48px rgba(96,165,250,0.1); }
-
-    /* ── ADD NEW CARD ── */
-    .card-add {
-      background: transparent;
-      border: 2px dashed rgba(108,99,255,0.2);
-      border-radius: 18px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 40px 24px; text-align: center;
-      cursor: default; min-height: 180px;
-      transition: border-color 0.18s;
+    /* Pulse-pop animation when checked */
+    @keyframes checkPop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.35); }
+      100% { transform: scale(1); }
     }
-    .card-add:hover { border-color: rgba(108,99,255,0.4); }
-    .card-add .plus { font-size: 1.8rem; color: rgba(108,99,255,0.3); margin-bottom: 10px; }
-    .card-add p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
-    .card-add strong { color: var(--accent); }
+    .check-box.pop { animation: checkPop 0.38s ease; }
 
-    /* ── FOOTER ── */
-    .page-footer {
-      position: relative; z-index: 1;
-      text-align: center; margin-top: 56px;
-      font-size: 0.78rem; color: var(--muted);
+    /* Glow ring burst when checked */
+    .check-box::after {
+      content: '';
+      position: absolute; inset: -4px;
+      border-radius: 9px;
+      border: 2px solid var(--green);
+      opacity: 0; transform: scale(0.7);
+      pointer-events: none;
     }
-    .page-footer span { color: var(--accent); }
+    .check-box.glow::after {
+      animation: glowBurst 0.55s ease-out;
+    }
+    @keyframes glowBurst {
+      0%   { opacity: 0.7; transform: scale(0.7); }
+      100% { opacity: 0; transform: scale(1.9); }
+    }
+
+    /* Section celebration shimmer when fully complete */
+    @keyframes sectionShimmer {
+      0%   { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+      30%  { box-shadow: 0 0 0 3px rgba(74,222,128,0.35); }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+    .section.celebrate { animation: sectionShimmer 0.9s ease; }
+
+    /* Footer */
+    .footer {
+      text-align: center; margin-top: 8px; padding: 16px 18px;
+      background: linear-gradient(135deg, rgba(108,99,255,0.13), rgba(74,222,128,0.08));
+      border-radius: 14px; border: 1px solid var(--border);
+    }
+    .footer p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .footer strong { color: var(--gold); }
+
+    /* Section header badge (earned) */
+    .earned-badge {
+      display: none;
+      align-items: center; gap: 3px;
+      font-size: 0.65rem; font-weight: 800;
+      color: var(--green);
+      background: rgba(74,222,128,0.12);
+      border: 1px solid rgba(74,222,128,0.3);
+      border-radius: 99px; padding: 2px 8px;
+      flex-shrink: 0;
+      animation: badgeIn 0.4s ease;
+    }
+    .earned-badge.show { display: flex; }
+    @keyframes badgeIn {
+      0%   { opacity: 0; transform: scale(0.6) translateY(4px); }
+      60%  { transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Achievement toast */
+    #achievement-toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: var(--surface);
+      border: 1px solid var(--green);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(74,222,128,0.15);
+      border-radius: 14px;
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 12px;
+      z-index: 60;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 90vw;
+    }
+    #achievement-toast.show { transform: translateX(-50%) translateY(0); }
+    .toast-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      animation: toastIconSpin 0.6s ease;
+    }
+    @keyframes toastIconSpin {
+      0%   { transform: rotate(-20deg) scale(0.5); }
+      60%  { transform: rotate(10deg) scale(1.15); }
+      100% { transform: rotate(0) scale(1); }
+    }
+    .toast-text strong {
+      display: block; font-family: 'Sora', sans-serif;
+      font-size: 0.82rem; font-weight: 800; color: var(--text);
+    }
+    .toast-text span {
+      font-size: 0.74rem; color: var(--muted);
+    }
+
+    /* Final celebration overlay */
+    .all-done {
+      display: none; text-align: center; font-family: 'Sora', sans-serif;
+      font-size: 0.95rem; font-weight: 700; color: var(--green); padding: 10px 0 0;
+    }
+    .all-done.show { display: block; animation: badgeIn 0.5s ease; }
   </style>
 </head>
 <body>
 <canvas id="particle-bg"></canvas>
-
-<div class="hero">
-  <div class="hero-eyebrow">🚀 Painel de Estudos</div>
-  <h1>Meus Checklists</h1>
-  <p>Todos os seus checklists de estudo em um só lugar. Clique para abrir.</p>
-</div>
-
-<div class="stats-bar" style="position:relative;z-index:1;">
-  <div class="stat">
-    <span class="stat-value" id="total-lists">5</span>
-    <span class="stat-label">Listas</span>
-  </div>
-  <div class="stat">
-    <span class="stat-value" id="total-topics">—</span>
-    <span class="stat-label">Tópicos</span>
-  </div>
-  <div class="stat">
-    <span class="stat-value" id="total-weeks">6</span>
-    <span class="stat-label">Semanas</span>
+<canvas id="confetti-canvas"></canvas>
+<div id="achievement-toast">
+  <span class="toast-icon">🏅</span>
+  <div class="toast-text">
+    <strong id="toast-title">Seção concluída!</strong>
+    <span id="toast-sub">Mandou bem</span>
   </div>
 </div>
+<div class="container">
 
-<div class="grid-wrap">
-
-  <!-- CARD 1: Semanas 25 & 37 -->
-  <a class="card theme-purple" href="./semanas-25-37/index.html">
-    <div class="card-top">
-      <div class="card-icon-row">
-        <div class="card-icon">📋</div>
-        <span class="card-badge">Semanas 25 & 37</span>
-      </div>
-      <h3>Checklist de Estudos</h3>
-      <p>Síndrome Neurovascular, Declaração de Óbito, Saúde do Trabalhador e O Parto.</p>
-      <div class="card-tags">
-        <span class="tag">🧠 Neurologia</span>
-        <span class="tag">📄 MPS</span>
-        <span class="tag">🤰 GO</span>
-      </div>
-    </div>
-    <div class="card-footer">
-      <div class="card-bar-bg"><div class="card-bar-fill" style="width:0%"></div></div>
-      <span class="card-pct">0%</span>
-      <span class="card-arrow">→</span>
-    </div>
-  </a>
-
-  <!-- CARD 2: Semana 19 -->
-  <a class="card theme-green" href="./temas-para-revisar/index.html">
-    <div class="card-top">
-      <div class="card-icon-row">
-        <div class="card-icon">🔁</div>
-        <span class="card-badge">Revisão</span>
-      </div>
-      <h3>Temas para Revisar</h3>
-      <p>Endocrinologia, Pediatria, Nefrologia, Hepatologia, Neurologia, Infectologia e Cardiologia.</p>
-      <div class="card-tags">
-        <span class="tag">💉 Endo</span>
-        <span class="tag">👶 Pediatria</span>
-        <span class="tag">❤️ Cardio</span>
-      </div>
-    </div>
-    <div class="card-footer">
-      <div class="card-bar-bg"><div class="card-bar-fill" style="width:0%"></div></div>
-      <span class="card-pct">0%</span>
-      <span class="card-arrow">→</span>
-    </div>
-  </a>
-
-  <!-- CARD 3: Cronograma Antecipação -->
-  <a class="card theme-gold" href="./cronograma-antecipacao/index.html">
-    <div class="card-top">
-      <div class="card-icon-row">
-        <div class="card-icon">🗓️</div>
-        <span class="card-badge">Jun–Ago 2026</span>
-      </div>
-      <h3>Temas Antecipados</h3>
-      <p>Cronograma de liberações de 06/06 a 22/08 — 24 aulas distribuídas em 10 datas.</p>
-      <div class="card-tags">
-        <span class="tag">📅 Cardiologia</span>
-        <span class="tag">🦴 Ortopedia</span>
-        <span class="tag">🩺 Reumatologia</span>
-      </div>
-    </div>
-    <div class="card-footer">
-      <div class="card-bar-bg"><div class="card-bar-fill" style="width:0%"></div></div>
-      <span class="card-pct">0%</span>
-      <span class="card-arrow">→</span>
-    </div>
-  </a>
-
-  <!-- CARD 4: Cronograma de Estudos -->
-  <a class="card theme-blue" href="./cronograma-estudos/index.html">
-    <div class="card-top">
-      <div class="card-icon-row">
-        <div class="card-icon">📚</div>
-        <span class="card-badge">Semanas 01–06</span>
-      </div>
-      <h3>Aulas & Revisões</h3>
-      <p>Cronograma completo com aulas principais, bônus e janelas de revisão por semana.</p>
-      <div class="card-tags">
-        <span class="tag">🩺 Clínica</span>
-        <span class="tag">🏥 Cirurgia</span>
-        <span class="tag">👶 Pediatria</span>
-        <span class="tag">🔵 GO</span>
-      </div>
-    </div>
-    <div class="card-footer">
-      <div class="card-bar-bg"><div class="card-bar-fill" style="width:0%"></div></div>
-      <span class="card-pct">0%</span>
-      <span class="card-arrow">→</span>
-    </div>
-  </a>
-
-  <!-- CARD 5: Planner Semanal -->
-  <a class="card theme-pink" href="./planner-semanal/index.html">
-    <div class="card-top">
-      <div class="card-icon-row">
-        <div class="card-icon">🗂️</div>
-        <span class="card-badge">Semana atual</span>
-      </div>
-      <h3>Planner Semanal</h3>
-      <p>Estudos, casa, compras, descanso, lazer e rotina diária com horários.</p>
-      <div class="card-tags">
-        <span class="tag">📖 Estudos</span>
-        <span class="tag">🛒 Casa</span>
-        <span class="tag">🌿 Lazer</span>
-        <span class="tag">⏰ Rotina</span>
-      </div>
-    </div>
-    <div class="card-footer">
-      <div class="card-bar-bg"><div class="card-bar-fill" style="width:0%"></div></div>
-      <span class="card-pct">0%</span>
-      <span class="card-arrow">→</span>
-    </div>
-  </a>
-
-  <!-- CARD ADD -->
-  <div class="card-add">
-    <div class="plus">＋</div>
-    <p>Peça ao Claude um novo checklist e adicione aqui como uma nova pasta no repositório.<br><br>
-    <strong>Como:</strong> crie a pasta e cole o HTML como <code style="font-size:0.72rem;background:rgba(108,99,255,0.12);padding:1px 5px;border-radius:4px;color:#a78bfa;">index.html</code> dentro dela.</p>
+  <div class="header">
+    <span class="badge">Checklist de Estudo</span>
+    <h1>📋 Semanas 25 &amp; 37</h1>
   </div>
 
-</div>
+  <div class="progress-wrap">
+    <div class="sound-toggle" id="sound-toggle" title="Ativar/desativar sons">🔊</div>
+    <div class="progress-top">
+      <span class="progress-label">Progresso</span>
+      <span class="progress-count" id="count">0 / 15</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar"></div></div>
+    <div class="all-done" id="alldone">🎉 Semana 25 finalizada!</div>
+  </div>
 
-<div class="page-footer">
-  <p>Feito com <span>✦</span> Claude · GitHub Pages</p>
+  <!-- SÍNDROME NEUROVASCULAR -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🧠</span>
+      <span class="section-title">Síndrome Neurovascular</span>
+      <span class="earned-badge">🏅 completo</span>
+      <div class="section-mini-bar"><div class="section-mini-fill"></div></div>
+    </div>
+    <div class="section-items">
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Síndrome Neurovascular</span>
+      </label>
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">AVE Isquêmico</span>
+      </label>
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Hemorragia Subaracnóidea</span>
+      </label>
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Hemorragia Intraparenquimatosa</span>
+      </label>
+    </div>
+    <div class="bonus-row">
+      <span class="bonus-label">Bônus</span>
+      <label class="item" style="padding:0;">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">AIT (Ataque Isquêmico Transitório)</span>
+      </label>
+    </div>
+    <div class="bonus-row" style="background:rgba(108,99,255,0.07); border-top: 1px dashed rgba(108,99,255,0.25);">
+      <span class="bonus-label" style="color:var(--accent);background:rgba(108,99,255,0.12);">✏️ Quest.</span>
+      <label class="item" style="padding:0;">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Exercícios</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- DECLARAÇÃO DE ÓBITO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📄</span>
+      <span class="section-title">Declaração de Óbito e Saúde do Trabalhador</span>
+      <span class="earned-badge">🏅 completo</span>
+      <div class="section-mini-bar"><div class="section-mini-fill"></div></div>
+    </div>
+    <div class="section-items">
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Declaração de Óbito</span>
+      </label>
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Saúde do Trabalhador</span>
+      </label>
+    </div>
+    <div class="bonus-row">
+      <span class="bonus-label">Bônus</span>
+      <label class="item" style="padding:0;">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Saúde do Trabalhador: Agrotóxicos</span>
+      </label>
+    </div>
+    <div class="bonus-row" style="background:rgba(108,99,255,0.07); border-top: 1px dashed rgba(108,99,255,0.25);">
+      <span class="bonus-label" style="color:var(--accent);background:rgba(108,99,255,0.12);">✏️ Quest.</span>
+      <label class="item" style="padding:0;">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Exercícios</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- SEMANA 37 — PARTO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🤰</span>
+      <span class="section-title">Parto (Semana 37)</span>
+      <span class="earned-badge">🏅 completo</span>
+      <div class="section-mini-bar"><div class="section-mini-fill"></div></div>
+    </div>
+    <div class="section-items">
+      <label class="item done">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Estática Fetal</span>
+      </label>
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Amniorrexe Prematura</span>
+      </label>
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Trabalho de Parto Prematuro</span>
+      </label>
+      <label class="item">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Assistência ao Parto, Partograma</span>
+      </label>
+    </div>
+    <div class="bonus-row" style="background:rgba(108,99,255,0.07); border-top: 1px dashed rgba(108,99,255,0.25);">
+      <span class="bonus-label" style="color:var(--accent);background:rgba(108,99,255,0.12);">✏️ Quest.</span>
+      <label class="item" style="padding:0;">
+        <span class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="item-text">Exercícios</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>✅ <strong>Marque cada tópico</strong> conforme for revisando.<br>
+    Bons estudos na Semana 25! 🚀</p>
+  </div>
+
 </div>
 
 <script>
-  /* ── SPACE BACKGROUND ── */
+  /* ============ SOUND ENGINE (synthesized, no audio files) ============ */
+  let audioCtx = null;
+  let soundOn = true;
+  const soundToggle = document.getElementById('sound-toggle');
+
+  function getAudioCtx() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playTone(freq, startTime, duration, type, gainPeak, ctx) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, startTime);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(gainPeak, startTime + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.02);
+  }
+
+  // Soft tick when checking an item
+  function playCheckSound() {
+    if (!soundOn) return;
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    playTone(880, t, 0.09, 'sine', 0.12, ctx);
+    playTone(1320, t + 0.04, 0.08, 'sine', 0.07, ctx);
+  }
+
+  // Lower, gentler tick when unchecking an item
+  function playUncheckSound() {
+    if (!soundOn) return;
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    playTone(420, t, 0.08, 'sine', 0.08, ctx);
+  }
+
+  // Cheerful ascending arpeggio when a section is completed
+  function playAchievementSound() {
+    if (!soundOn) return;
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+    notes.forEach((f, i) => {
+      playTone(f, t + i * 0.075, 0.22, 'triangle', 0.1, ctx);
+    });
+  }
+
+  // Bigger finale chord when the whole checklist is complete
+  function playFinaleSound() {
+    if (!soundOn) return;
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    const chord = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+    chord.forEach((f, i) => {
+      playTone(f, t + i * 0.04, 0.5, 'triangle', 0.09, ctx);
+    });
+  }
+
+  soundToggle.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundToggle.textContent = soundOn ? '🔊' : '🔇';
+    soundToggle.classList.toggle('muted', !soundOn);
+    if (soundOn) getAudioCtx(); // warm up / unlock audio on user gesture
+  });
+
+  /* ============ AMBIENT SPACE BACKGROUND ============ */
   const pCanvas = document.getElementById('particle-bg');
   const pCtx = pCanvas.getContext('2d');
-  function resize() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', () => { resize(); init(); });
 
-  let stars = [], nebulae = [], comets = [], nextComet = 0;
-  const SC = ['rgba(255,255,255,','rgba(196,181,253,','rgba(147,197,253,','rgba(254,240,138,'];
-
-  function init() {
-    stars = [
-      {count:70,minR:.4,maxR:.9,minA:.12,maxA:.4,sp:.01},
-      {count:36,minR:.8,maxR:1.6,minA:.2,maxA:.55,sp:.025},
-      {count:14,minR:1.4,maxR:2.5,minA:.3,maxA:.8,sp:.045}
-    ].map(l => ({...l, pts: Array.from({length:l.count},()=>({
-      x:Math.random()*pCanvas.width, y:Math.random()*pCanvas.height,
-      r:Math.random()*(l.maxR-l.minR)+l.minR,
-      bA:Math.random()*(l.maxA-l.minA)+l.minA,
-      c:SC[Math.floor(Math.random()*SC.length)],
-      ph:Math.random()*Math.PI*2, ts:Math.random()*.014+.005
-    }))}));
-    nebulae = [
-      {x:pCanvas.width*.15,y:pCanvas.height*.2,r:320,c:'108,99,255',a:.05,vx:.01,vy:.005},
-      {x:pCanvas.width*.85,y:pCanvas.height*.6,r:380,c:'74,222,128',a:.032,vx:-.007,vy:.009},
-      {x:pCanvas.width*.5,y:pCanvas.height*.9,r:280,c:'251,191,36',a:.025,vx:.004,vy:-.007}
-    ];
-    comets = []; nextComet = Date.now() + 9000 + Math.random()*7000;
+  function resizeParticleCanvas() {
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
   }
-  init();
+  resizeParticleCanvas();
+  window.addEventListener('resize', () => { resizeParticleCanvas(); initSpaceScene(); });
 
-  function draw() {
-    pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
-    nebulae.forEach(n=>{
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<-n.r)n.x=pCanvas.width+n.r; if(n.x>pCanvas.width+n.r)n.x=-n.r;
-      if(n.y<-n.r)n.y=pCanvas.height+n.r; if(n.y>pCanvas.height+n.r)n.y=-n.r;
-      const g=pCtx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
-      g.addColorStop(0,`rgba(${n.c},${n.a})`); g.addColorStop(1,`rgba(${n.c},0)`);
-      pCtx.fillStyle=g; pCtx.fillRect(n.x-n.r,n.y-n.r,n.r*2,n.r*2);
-    });
-    stars.forEach(l=>l.pts.forEach(s=>{
-      s.x-=l.sp; if(s.x<-4){s.x=pCanvas.width+4;s.y=Math.random()*pCanvas.height;}
-      s.ph+=s.ts; const tw=Math.sin(s.ph)*.35+.65; const a=s.bA*tw;
-      pCtx.beginPath(); pCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      pCtx.fillStyle=s.c+a+')'; pCtx.fill();
-      if(s.r>1.6){pCtx.beginPath();pCtx.arc(s.x,s.y,s.r*2.2,0,Math.PI*2);pCtx.fillStyle=s.c+(a*.1)+')';pCtx.fill();}
+  /* ---- Layered starfield (parallax depth) ---- */
+  let starLayers = [];
+  let nebulae = [];
+  let comets = [];
+  let nextCometAt = 0;
+
+  const STAR_COLORS = [
+    'rgba(255,255,255,', // white
+    'rgba(196,181,253,', // soft violet
+    'rgba(147,197,253,', // soft blue
+    'rgba(254,240,138,'  // soft gold
+  ];
+
+  function initSpaceScene() {
+    starLayers = [
+      // far layer: tiny, dim, slow drift
+      { count: 70, minR: 0.4, maxR: 0.9, minA: 0.15, maxA: 0.45, speed: 0.012, twinkle: true },
+      // mid layer: medium
+      { count: 38, minR: 0.8, maxR: 1.6, minA: 0.25, maxA: 0.6, speed: 0.028, twinkle: true },
+      // near layer: bigger, brighter, faster drift — feels closest
+      { count: 16, minR: 1.4, maxR: 2.6, minA: 0.35, maxA: 0.85, speed: 0.05, twinkle: true }
+    ].map(layer => ({
+      ...layer,
+      stars: Array.from({ length: layer.count }, () => ({
+        x: Math.random() * pCanvas.width,
+        y: Math.random() * pCanvas.height,
+        r: Math.random() * (layer.maxR - layer.minR) + layer.minR,
+        baseAlpha: Math.random() * (layer.maxA - layer.minA) + layer.minA,
+        color: STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)],
+        phase: Math.random() * Math.PI * 2,
+        twinkleSpeed: Math.random() * 0.015 + 0.006
+      }))
     }));
-    if(Date.now()>nextComet){
-      const fl=Math.random()<.5;
-      comets.push({x:fl?-40:pCanvas.width+40,y:Math.random()*pCanvas.height*.55,
-        vx:(fl?1:-1)*(Math.random()*2+2.4),vy:Math.random()*.9+.5,
-        len:Math.random()*70+55,life:1});
-      nextComet=Date.now()+9000+Math.random()*7000;
-    }
-    comets.forEach(c=>{
-      c.x+=c.vx;c.y+=c.vy;c.life-=.004;
-      const tx=c.x-Math.cos(Math.atan2(c.vy,c.vx))*c.len;
-      const ty=c.y-Math.sin(Math.atan2(c.vy,c.vx))*c.len;
-      const g=pCtx.createLinearGradient(c.x,c.y,tx,ty);
-      g.addColorStop(0,`rgba(255,255,255,${.85*c.life})`);
-      g.addColorStop(.4,`rgba(196,181,253,${.3*c.life})`);
-      g.addColorStop(1,'rgba(196,181,253,0)');
-      pCtx.strokeStyle=g;pCtx.lineWidth=1.7;pCtx.lineCap='round';
-      pCtx.beginPath();pCtx.moveTo(c.x,c.y);pCtx.lineTo(tx,ty);pCtx.stroke();
-      pCtx.beginPath();pCtx.arc(c.x,c.y,1.5,0,Math.PI*2);
-      pCtx.fillStyle=`rgba(255,255,255,${c.life})`;pCtx.fill();
-    });
-    comets=comets.filter(c=>c.life>0&&c.x>-120&&c.x<pCanvas.width+120);
-    requestAnimationFrame(draw);
-  }
-  draw();
 
-  /* ── CARD HOVER GLOW ── */
-  document.querySelectorAll('.card[href]').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      card.style.transition = 'transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s';
+    // Soft nebula glows drifting in the deep background
+    nebulae = [
+      { x: pCanvas.width * 0.18, y: pCanvas.height * 0.22, r: 320, color: '108,99,255', alpha: 0.05, vx: 0.012, vy: 0.006 },
+      { x: pCanvas.width * 0.82, y: pCanvas.height * 0.55, r: 380, color: '74,222,128', alpha: 0.035, vx: -0.008, vy: 0.01 },
+      { x: pCanvas.width * 0.45, y: pCanvas.height * 0.85, r: 280, color: '251,191,36', alpha: 0.03, vx: 0.005, vy: -0.008 }
+    ];
+
+    comets = [];
+    scheduleNextComet();
+  }
+
+  function scheduleNextComet() {
+    // a comet drifts across roughly every 7-15 seconds
+    nextCometAt = Date.now() + (Math.random() * 8000 + 7000);
+  }
+
+  function spawnComet() {
+    const fromLeft = Math.random() < 0.5;
+    const y = Math.random() * pCanvas.height * 0.6;
+    comets.push({
+      x: fromLeft ? -40 : pCanvas.width + 40,
+      y: y,
+      vx: (fromLeft ? 1 : -1) * (Math.random() * 2.2 + 2.6),
+      vy: Math.random() * 1.1 + 0.6,
+      len: Math.random() * 70 + 60,
+      life: 1
+    });
+  }
+
+  initSpaceScene();
+
+  function animateParticles() {
+    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+    // 1) Nebula glows (deepest layer)
+    nebulae.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < -n.r) n.x = pCanvas.width + n.r;
+      if (n.x > pCanvas.width + n.r) n.x = -n.r;
+      if (n.y < -n.r) n.y = pCanvas.height + n.r;
+      if (n.y > pCanvas.height + n.r) n.y = -n.r;
+
+      const grad = pCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+      grad.addColorStop(0, `rgba(${n.color},${n.alpha})`);
+      grad.addColorStop(1, `rgba(${n.color},0)`);
+      pCtx.fillStyle = grad;
+      pCtx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+    });
+
+    // 2) Star layers (back to front for proper parallax feel)
+    starLayers.forEach(layer => {
+      layer.stars.forEach(s => {
+        s.x -= layer.speed; // slow horizontal drift, like gliding through space
+        if (s.x < -4) { s.x = pCanvas.width + 4; s.y = Math.random() * pCanvas.height; }
+
+        s.phase += s.twinkleSpeed;
+        const twinkle = layer.twinkle ? (Math.sin(s.phase) * 0.35 + 0.65) : 1;
+        const alpha = s.baseAlpha * twinkle;
+
+        pCtx.beginPath();
+        pCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        pCtx.fillStyle = s.color + alpha + ')';
+        pCtx.fill();
+
+        // gentle glow on the brighter (near layer) stars
+        if (s.r > 1.6) {
+          pCtx.beginPath();
+          pCtx.arc(s.x, s.y, s.r * 2.4, 0, Math.PI * 2);
+          pCtx.fillStyle = s.color + (alpha * 0.12) + ')';
+          pCtx.fill();
+        }
+      });
+    });
+
+    // 3) Comets / shooting stars crossing occasionally
+    if (Date.now() > nextCometAt) {
+      spawnComet();
+      scheduleNextComet();
+    }
+    comets.forEach(c => {
+      c.x += c.vx;
+      c.y += c.vy;
+      c.life -= 0.004;
+
+      const tailX = c.x - Math.cos(Math.atan2(c.vy, c.vx)) * c.len;
+      const tailY = c.y - Math.sin(Math.atan2(c.vy, c.vx)) * c.len;
+      const grad = pCtx.createLinearGradient(c.x, c.y, tailX, tailY);
+      grad.addColorStop(0, `rgba(255,255,255,${0.85 * c.life})`);
+      grad.addColorStop(0.4, `rgba(196,181,253,${0.35 * c.life})`);
+      grad.addColorStop(1, 'rgba(196,181,253,0)');
+
+      pCtx.strokeStyle = grad;
+      pCtx.lineWidth = 1.8;
+      pCtx.lineCap = 'round';
+      pCtx.beginPath();
+      pCtx.moveTo(c.x, c.y);
+      pCtx.lineTo(tailX, tailY);
+      pCtx.stroke();
+
+      // bright head of the comet
+      pCtx.beginPath();
+      pCtx.arc(c.x, c.y, 1.6, 0, Math.PI * 2);
+      pCtx.fillStyle = `rgba(255,255,255,${c.life})`;
+      pCtx.fill();
+    });
+    comets = comets.filter(c =>
+      c.life > 0 && c.x > -100 && c.x < pCanvas.width + 100 && c.y < pCanvas.height + 100
+    );
+
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+
+  /* ============ CONFETTI BURST ============ */
+  const cCanvas = document.getElementById('confetti-canvas');
+  const cCtx = cCanvas.getContext('2d');
+  let confettiPieces = [];
+  let confettiRunning = false;
+
+  function resizeConfettiCanvas() {
+    cCanvas.width = window.innerWidth;
+    cCanvas.height = window.innerHeight;
+  }
+  resizeConfettiCanvas();
+  window.addEventListener('resize', resizeConfettiCanvas);
+
+  const confettiColors = ['#6c63ff', '#4ade80', '#fbbf24', '#f472b6', '#60a5fa'];
+
+  function burstConfetti(originX, originY, count) {
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.random() * Math.PI) - Math.PI; // upward-ish spread
+      const speed = Math.random() * 3.5 + 2;
+      confettiPieces.push({
+        x: originX,
+        y: originY,
+        vx: Math.cos(angle) * speed * (Math.random() < 0.5 ? -1 : 1),
+        vy: -(Math.random() * 4 + 2.5),
+        gravity: 0.13,
+        size: Math.random() * 5 + 3,
+        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 12,
+        life: 1,
+        decay: Math.random() * 0.012 + 0.008,
+        shape: Math.random() < 0.5 ? 'rect' : 'circle'
+      });
+    }
+    if (!confettiRunning) {
+      confettiRunning = true;
+      animateConfetti();
+    }
+  }
+
+  function animateConfetti() {
+    cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+    confettiPieces.forEach(p => {
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotSpeed;
+      p.life -= p.decay;
+
+      cCtx.save();
+      cCtx.translate(p.x, p.y);
+      cCtx.rotate(p.rotation * Math.PI / 180);
+      cCtx.globalAlpha = Math.max(p.life, 0);
+      cCtx.fillStyle = p.color;
+      if (p.shape === 'rect') {
+        cCtx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.6);
+      } else {
+        cCtx.beginPath();
+        cCtx.arc(0, 0, p.size / 2.2, 0, Math.PI * 2);
+        cCtx.fill();
+      }
+      cCtx.restore();
+    });
+
+    confettiPieces = confettiPieces.filter(p => p.life > 0 && p.y < cCanvas.height + 50);
+
+    if (confettiPieces.length > 0) {
+      requestAnimationFrame(animateConfetti);
+    } else {
+      confettiRunning = false;
+      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+    }
+  }
+
+  /* ============ ACHIEVEMENT TOAST ============ */
+  const toast = document.getElementById('achievement-toast');
+  const toastTitle = document.getElementById('toast-title');
+  const toastSub = document.getElementById('toast-sub');
+  let toastTimer = null;
+
+  function showAchievement(sectionName) {
+    toastTitle.textContent = 'Seção concluída!';
+    toastSub.textContent = sectionName;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  /* ============ CHECKLIST LOGIC + LOCALSTORAGE ============ */
+  const STORAGE_KEY = 'checklist-estudos-v1';
+  const items = document.querySelectorAll('.item');
+  const bar = document.getElementById('bar');
+  const count = document.getElementById('count');
+  const alldone = document.getElementById('alldone');
+  const total = items.length;
+  const sectionCelebrated = new WeakMap();
+
+  /* Assign a stable ID to each item based on its text content */
+  function itemId(item) {
+    return item.querySelector('.item-text')?.textContent.trim() || item.innerText.trim();
+  }
+
+  /* Save current state to localStorage */
+  function saveState() {
+    const state = {};
+    items.forEach(item => {
+      state[itemId(item)] = item.classList.contains('done');
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+
+  /* Load saved state from localStorage */
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const state = JSON.parse(saved);
+      items.forEach(item => {
+        if (state[itemId(item)] === true) item.classList.add('done');
+      });
+    } catch(e) {}
+  }
+
+  /* Add a reset button to the progress card */
+  (function addResetButton() {
+    const wrap = document.querySelector('.progress-wrap');
+    if (!wrap) return;
+    const btn = document.createElement('div');
+    btn.id = 'reset-btn';
+    btn.title = 'Resetar todos os itens';
+    btn.textContent = '↺';
+    btn.style.cssText = `
+      position:absolute; top:12px; right:48px;
+      width:30px; height:30px; border-radius:8px;
+      background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; cursor:pointer; color:#f87171;
+      transition:background 0.15s, transform 0.15s; user-select:none;
+    `;
+    btn.addEventListener('mouseenter', () => btn.style.background = 'rgba(255,107,107,0.2)');
+    btn.addEventListener('mouseleave', () => btn.style.background = 'rgba(255,107,107,0.1)');
+    btn.addEventListener('click', () => {
+      if (!confirm('Resetar todos os itens marcados?')) return;
+      items.forEach(item => item.classList.remove('done'));
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+      window.__finaleFired = false;
+      update(true);
+    });
+    wrap.appendChild(btn);
+  })();
+
+  function update(silent = false) {
+    const done = document.querySelectorAll('.item.done').length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    bar.style.width = pct + '%';
+    count.textContent = done + ' / ' + total;
+
+    if (done === total) {
+      alldone.classList.add('show');
+    } else {
+      alldone.classList.remove('show');
+    }
+
+    document.querySelectorAll('.section').forEach(sec => {
+      const secItems = sec.querySelectorAll('.item');
+      const secDone = sec.querySelectorAll('.item.done').length;
+      const fill = sec.querySelector('.section-mini-fill');
+      const badge = sec.querySelector('.earned-badge');
+      const titleEl = sec.querySelector('.section-title');
+
+      if (fill && secItems.length) {
+        fill.style.width = Math.round(secDone / secItems.length * 100) + '%';
+      }
+
+      const isComplete = secItems.length > 0 && secDone === secItems.length;
+
+      if (isComplete) {
+        if (badge) badge.classList.add('show');
+        if (!silent && !sectionCelebrated.get(sec)) {
+          sectionCelebrated.set(sec, true);
+          sec.classList.remove('celebrate');
+          void sec.offsetWidth;
+          sec.classList.add('celebrate');
+          const name = titleEl ? titleEl.textContent : 'Seção';
+          showAchievement(name);
+          const rect = sec.getBoundingClientRect();
+          burstConfetti(rect.left + rect.width / 2, rect.top + 30, 38);
+          playAchievementSound();
+        } else if (silent) {
+          sectionCelebrated.set(sec, true);
+        }
+      } else {
+        if (badge) badge.classList.remove('show');
+        sectionCelebrated.set(sec, false);
+      }
+    });
+
+    if (!silent && done === total && !window.__finaleFired) {
+      window.__finaleFired = true;
+      burstConfetti(window.innerWidth / 2, window.innerHeight * 0.3, 90);
+      playFinaleSound();
+    } else if (done < total) {
+      window.__finaleFired = false;
+    }
+  }
+
+  items.forEach(item => {
+    item.addEventListener('click', (e) => {
+      const wasDone = item.classList.contains('done');
+      item.classList.toggle('done');
+      const nowDone = item.classList.contains('done');
+      const chk = item.querySelector('.check-box');
+
+      if (!wasDone && nowDone) {
+        chk.classList.remove('pop', 'glow');
+        void chk.offsetWidth;
+        chk.classList.add('pop', 'glow');
+        const r = chk.getBoundingClientRect();
+        burstConfetti(r.left + r.width / 2, r.top + r.height / 2, 10);
+        playCheckSound();
+      } else if (wasDone && !nowDone) {
+        playUncheckSound();
+      }
+
+      saveState();
+      update();
     });
   });
+
+  /* Load saved state silently (no confetti/sounds on restore), then render */
+  loadState();
+  update(true);
 </script>
 </body>
 </html>
