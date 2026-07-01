@@ -729,17 +729,70 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
   }
 
-  /* ============ CHECKLIST LOGIC ============ */
+  /* ============ CHECKLIST LOGIC + LOCALSTORAGE ============ */
+  const STORAGE_KEY = 'checklist-estudos-v1';
   const items = document.querySelectorAll('.item');
   const bar = document.getElementById('bar');
   const count = document.getElementById('count');
   const alldone = document.getElementById('alldone');
   const total = items.length;
-
-  // Track which sections have already celebrated, so we don't re-fire on every click
   const sectionCelebrated = new WeakMap();
 
-  function update(triggerEl) {
+  /* Assign a stable ID to each item based on its text content */
+  function itemId(item) {
+    return item.querySelector('.item-text')?.textContent.trim() || item.innerText.trim();
+  }
+
+  /* Save current state to localStorage */
+  function saveState() {
+    const state = {};
+    items.forEach(item => {
+      state[itemId(item)] = item.classList.contains('done');
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+
+  /* Load saved state from localStorage */
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const state = JSON.parse(saved);
+      items.forEach(item => {
+        if (state[itemId(item)] === true) item.classList.add('done');
+      });
+    } catch(e) {}
+  }
+
+  /* Add a reset button to the progress card */
+  (function addResetButton() {
+    const wrap = document.querySelector('.progress-wrap');
+    if (!wrap) return;
+    const btn = document.createElement('div');
+    btn.id = 'reset-btn';
+    btn.title = 'Resetar todos os itens';
+    btn.textContent = '↺';
+    btn.style.cssText = `
+      position:absolute; top:12px; right:48px;
+      width:30px; height:30px; border-radius:8px;
+      background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; cursor:pointer; color:#f87171;
+      transition:background 0.15s, transform 0.15s; user-select:none;
+    `;
+    btn.addEventListener('mouseenter', () => btn.style.background = 'rgba(255,107,107,0.2)');
+    btn.addEventListener('mouseleave', () => btn.style.background = 'rgba(255,107,107,0.1)');
+    btn.addEventListener('click', () => {
+      if (!confirm('Resetar todos os itens marcados?')) return;
+      items.forEach(item => item.classList.remove('done'));
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+      window.__finaleFired = false;
+      update(true);
+    });
+    wrap.appendChild(btn);
+  })();
+
+  function update(silent = false) {
     const done = document.querySelectorAll('.item.done').length;
     const pct = total ? Math.round((done / total) * 100) : 0;
     bar.style.width = pct + '%';
@@ -766,20 +819,18 @@
 
       if (isComplete) {
         if (badge) badge.classList.add('show');
-        // Fire celebration only once per "completion event"
-        if (!sectionCelebrated.get(sec)) {
+        if (!silent && !sectionCelebrated.get(sec)) {
           sectionCelebrated.set(sec, true);
           sec.classList.remove('celebrate');
-          void sec.offsetWidth; // restart animation
+          void sec.offsetWidth;
           sec.classList.add('celebrate');
           const name = titleEl ? titleEl.textContent : 'Seção';
           showAchievement(name);
-
-          // Confetti burst from the section's position
           const rect = sec.getBoundingClientRect();
           burstConfetti(rect.left + rect.width / 2, rect.top + 30, 38);
-
           playAchievementSound();
+        } else if (silent) {
+          sectionCelebrated.set(sec, true);
         }
       } else {
         if (badge) badge.classList.remove('show');
@@ -787,8 +838,7 @@
       }
     });
 
-    // Big finale confetti when everything is done
-    if (done === total && !window.__finaleFired) {
+    if (!silent && done === total && !window.__finaleFired) {
       window.__finaleFired = true;
       burstConfetti(window.innerWidth / 2, window.innerHeight * 0.3, 90);
       playFinaleSound();
@@ -805,25 +855,24 @@
       const chk = item.querySelector('.check-box');
 
       if (!wasDone && nowDone) {
-        // pop + glow micro-interaction
         chk.classList.remove('pop', 'glow');
         void chk.offsetWidth;
         chk.classList.add('pop', 'glow');
-
-        // tiny confetti puff right at the checkbox
         const r = chk.getBoundingClientRect();
         burstConfetti(r.left + r.width / 2, r.top + r.height / 2, 10);
-
         playCheckSound();
       } else if (wasDone && !nowDone) {
         playUncheckSound();
       }
 
+      saveState();
       update();
     });
   });
 
-  update();
+  /* Load saved state silently (no confetti/sounds on restore), then render */
+  loadState();
+  update(true);
 </script>
 </body>
 </html>
